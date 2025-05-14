@@ -355,4 +355,227 @@ function initializeMap(): void {
       </div>
     `);
   });
+}
+
+function createTruck(scene: THREE.Scene, x: number, y: number, z: number): void {
+  // Cabine do caminhão
+  const cabGeometry = new THREE.BoxGeometry(2.5, 2, 2);
+  const cabMaterial = new THREE.MeshStandardMaterial({ color: 0x3366cc });
+  const cab = new THREE.Mesh(cabGeometry, cabMaterial);
+  cab.position.set(x, y + 1, z);
+  cab.receiveShadow = true;
+  cab.castShadow = true;
+  scene.add(cab);
+  
+  // Carroceria/trailer do caminhão
+  const trailerGeometry = new THREE.BoxGeometry(2.5, 2.5, 6);
+  const trailerMaterial = new THREE.MeshStandardMaterial({ color: 0xdddddd });
+  const trailer = new THREE.Mesh(trailerGeometry, trailerMaterial);
+  trailer.position.set(x, y + 1.25, z - 4);
+  trailer.receiveShadow = true;
+  trailer.castShadow = true;
+  scene.add(trailer);
+  
+  // Rodas
+  const wheelGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.3, 16);
+  const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x222222 });
+  
+  // Posicionar as rodas - Corrigido para funcionar com PointTuple
+  type WheelPosition = [number, number, number]; // Tipo explícito para posição 3D
+  
+  const wheelPositions: WheelPosition[] = [
+    [x - 1.25, y + 0.5, z + 0.7], // Dianteira esquerda
+    [x + 1.25, y + 0.5, z + 0.7], // Dianteira direita
+    [x - 1.25, y + 0.5, z - 2],   // Traseira esquerda (cabine)
+    [x + 1.25, y + 0.5, z - 2],   // Traseira direita (cabine)
+    [x - 1.25, y + 0.5, z - 6],   // Traseira esquerda (trailer)
+    [x + 1.25, y + 0.5, z - 6]    // Traseira direita (trailer)
+  ];
+  
+  wheelPositions.forEach(position => {
+    const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+    wheel.position.set(position[0], position[1], position[2]);
+    wheel.rotation.z = Math.PI / 2;
+    wheel.receiveShadow = true;
+    wheel.castShadow = true;
+    scene.add(wheel);
+  });
+}
+
+function createForklift(scene: THREE.Scene, x: number, y: number, z: number): void {
+  // Corpo da empilhadeira
+  const bodyGeometry = new THREE.BoxGeometry(1.8, 1.2, 2.5);
+  const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc00 });
+  const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+  body.position.set(x, y + 0.6, z);
+  body.receiveShadow = true;
+  body.castShadow = true;
+  scene.add(body);
+  
+  // Garfos
+  const forkGeometry = new THREE.BoxGeometry(0.1, 0.1, 1.5);
+  const forkMaterial = new THREE.MeshStandardMaterial({ color: 0x999999 });
+  
+  const leftFork = new THREE.Mesh(forkGeometry, forkMaterial);
+  leftFork.position.set(x - 0.4, y + 0.05, z + 2);
+  leftFork.receiveShadow = true;
+  leftFork.castShadow = true;
+  scene.add(leftFork);
+  
+  const rightFork = new THREE.Mesh(forkGeometry, forkMaterial);
+  rightFork.position.set(x + 0.4, y + 0.05, z + 2);
+  rightFork.receiveShadow = true;
+  rightFork.castShadow = true;
+  scene.add(rightFork);
+  
+  // Mastro (estrutura vertical)
+  const mastGeometry = new THREE.BoxGeometry(1, 2, 0.2);
+  const mastMaterial = new THREE.MeshStandardMaterial({ color: 0x777777 });
+  const mast = new THREE.Mesh(mastGeometry, mastMaterial);
+  mast.position.set(x, y + 1.2, z + 1.25);
+  mast.receiveShadow = true;
+  mast.castShadow = true;
+  scene.add(mast);
+  
+  // Rodas
+  const wheelGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 16);
+  const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x222222 });
+  
+  const frontLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+  frontLeftWheel.position.set(x - 0.9, y + 0.4, z + 0.8);
+  frontLeftWheel.rotation.z = Math.PI / 2;
+  frontLeftWheel.receiveShadow = true;
+  frontLeftWheel.castShadow = true;
+  scene.add(frontLeftWheel);
+  
+  const frontRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+  frontRightWheel.position.set(x + 0.9, y + 0.4, z + 0.8);
+  frontRightWheel.rotation.z = Math.PI / 2;
+  frontRightWheel.receiveShadow = true;
+  frontRightWheel.castShadow = true;
+  scene.add(frontRightWheel);
+  
+  const backLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+  backLeftWheel.position.set(x - 0.9, y + 0.4, z - 0.8);
+  backLeftWheel.rotation.z = Math.PI / 2;
+  backLeftWheel.receiveShadow = true;
+  backLeftWheel.castShadow = true;
+  scene.add(backLeftWheel);
+  
+  const backRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+  backRightWheel.position.set(x + 0.9, y + 0.4, z - 0.8);
+  backRightWheel.rotation.z = Math.PI / 2;
+  backRightWheel.receiveShadow = true;
+  backRightWheel.castShadow = true;
+  scene.add(backRightWheel);
+}
+
+function createShelf(scene: THREE.Scene, x: number, y: number, z: number): void {
+  // Base da prateleira
+  const baseGeometry = new THREE.BoxGeometry(4, 0.2, 3);
+  const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x555555 });
+  const base = new THREE.Mesh(baseGeometry, baseMaterial);
+  base.position.set(x, y, z);
+  base.receiveShadow = true;
+  base.castShadow = true;
+  scene.add(base);
+  
+  // Prateleiras (níveis)
+  for (let level = 1; level <= 3; level++) {
+    const shelfGeometry = new THREE.BoxGeometry(4, 0.1, 3);
+    const shelfMaterial = new THREE.MeshStandardMaterial({ color: 0x777777 });
+    const shelf = new THREE.Mesh(shelfGeometry, shelfMaterial);
+    shelf.position.set(x, level, z);
+    shelf.receiveShadow = true;
+    shelf.castShadow = true;
+    scene.add(shelf);
+    
+    // Adicionar apoios/pilares
+    const pillarGeometry = new THREE.BoxGeometry(0.2, level, 0.2);
+    const pillarMaterial = new THREE.MeshStandardMaterial({ color: 0x444444 });
+    
+    // Quatro pilares, um em cada canto
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
+        pillar.position.set(x + (i * 1.9), level / 2, z + (j * 1.4));
+        pillar.receiveShadow = true;
+        pillar.castShadow = true;
+        scene.add(pillar);
+      }
+    }
+    
+    // Adicionar caixas nas prateleiras
+    if (Math.random() > 0.3) {
+      const boxGeometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
+      const boxMaterial = new THREE.MeshStandardMaterial({ 
+        color: Math.random() > 0.5 ? 0x8B4513 : 0xD2B48C
+      });
+      const box = new THREE.Mesh(boxGeometry, boxMaterial);
+      box.position.set(x + (Math.random() - 0.5) * 3, level + 0.5, z + (Math.random() - 0.5) * 2);
+      box.receiveShadow = true;
+      box.castShadow = true;
+      scene.add(box);
+    }
+  }
+}
+
+function createDock(scene: THREE.Scene, x: number, y: number, z: number): void {
+  // Plataforma da doca
+  const platformGeometry = new THREE.BoxGeometry(4, 0.5, 3);
+  const platformMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+  const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+  platform.position.set(x, y - 0.25, z);
+  platform.receiveShadow = true;
+  platform.castShadow = true;
+  scene.add(platform);
+  
+  // Rampa da doca
+  const rampGeometry = new THREE.BoxGeometry(3, 0.2, 2);
+  const rampMaterial = new THREE.MeshStandardMaterial({ color: 0x777777 });
+  const ramp = new THREE.Mesh(rampGeometry, rampMaterial);
+  ramp.position.set(x, y - 0.4, z - 2.5);
+  ramp.rotation.x = -Math.PI / 12; // Leve inclinação
+  ramp.receiveShadow = true;
+  ramp.castShadow = true;
+  scene.add(ramp);
+}
+
+function createWarehouseLayout(scene: THREE.Scene): void {
+  // Criar o piso
+  const floorGeometry = new THREE.PlaneGeometry(30, 30);
+  const floorMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0xcccccc, 
+    roughness: 0.8 
+  });
+  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+  
+  // Adicionar linhas de grade no piso
+  const gridHelper = new THREE.GridHelper(30, 30);
+  scene.add(gridHelper);
+  
+  // Adicionar prateleiras/estantes
+  for (let i = -10; i <= 10; i += 5) {
+    for (let j = -10; j <= 10; j += 5) {
+      // Pular o centro para criar um corredor
+      if (i !== 0) {
+        createShelf(scene, i, 0, j);
+      }
+    }
+  }
+  
+  // Adicionar docas na extremidade
+  for (let i = -10; i <= 10; i += 5) {
+    if (i !== 0) {
+      createDock(scene, i, 0, -15);
+    }
+  }
+  
+  // Adicionar caminhões e equipamentos de movimentação
+  createTruck(scene, 0, 0, -15);
+  createForklift(scene, 5, 0, 0);
+  createForklift(scene, -5, 0, 5);
 } 
